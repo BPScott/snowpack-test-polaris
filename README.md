@@ -1,25 +1,31 @@
-# New Project
+# Demonstrating a bug in snowpack
 
-> ✨ Bootstrapped with Create Snowpack App (CSA).
+`@shopify/polaris` is a package that contains a json import from another package.
 
-## Available Scripts
+It looks like this:
 
-### npm start
+```js
+import DefaultThemeColors from '@shopify/polaris-tokens/dist-modern/theme/base.json';
+```
 
-Runs the app in the development mode.
-Open http://localhost:8080 to view it in the browser.
+Importing and using `@shopify/polaris` in snowpack 3.0.13 works great.
 
-The page will reload if you make edits.
-You will also see any lint errors in the console.
+However in Snowpack 3.1.0-pre.8 it throws an error. It seems that within packages,
+proxies for json files are not being used. This works if you try and import the json from app code, it only failes when you import a package that then imports a json file.
 
-### npm run build
+Admittedly this is a little funky as JSON modules have not been standardized just yet but considering bundlers and snowpack 3.0.x understood this format and importing the json file from within app code works it seems suprising that it fails when adding the indirection of an extra package.
 
-Builds a static copy of your site to the `build/` folder.
-Your app is ready to be deployed!
+### To test
 
-**For the best production performance:** Add a build bundler plugin like "@snowpack/plugin-webpack" to your `snowpack.config.js` config file.
+- Clone this repo
+- `npm install` to install dependencies
+- `npm start` to run and open the server
+- When viewing the site in your browser note the site does not render and you get the following error when running nowpack 3.1.0-pre.8, as it tries to load `http://localhost:8080/_snowpack/pkg/@shopify.polaris-tokens.dist-modern.theme.base.v2.20.0.json`
 
-### npm test
+  ```
+  Failed to load module script: The server responded with a non-JavaScript MIME type of "application/json". Strict MIME type checking is enforced for module scripts per HTML spec.
+  ```
 
-Launches the application test runner.
-Run with the `--watch` flag (`npm test -- --watch`) to run in interactive watch mode.
+### Expected Behaviour
+
+Page loads sucessfully
