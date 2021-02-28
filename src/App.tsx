@@ -1,4 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import {AppProvider, Button} from '@shopify/polaris';
+import '@shopify/polaris/dist/styles.css';
+
+// @shopify/polaris imports a json file from the @shopify/polaris-tokens package.
+// It looks like this:
+// import DefaultThemeColors from '@shopify/polaris-tokens/dist-modern/theme/base.json';
+// In Snowpack 3.1.0-pre.8 That import works if we perform it app code but not
+// within a package
+
 import logo from './logo.svg';
 import './App.css';
 
@@ -15,6 +24,9 @@ function App({}: AppProps) {
   // Return the App component.
   return (
     <div className="App">
+    <AppProvider i18n={{}}>
+      <Button primary>Hello</Button>
+    </AppProvider>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
